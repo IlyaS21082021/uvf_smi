@@ -6,7 +6,7 @@
 #include <charconv>
 #include <sys/stat.h>
 
-cinstexpr uint32_t GPUPIDS = 100;
+constexpr uint32_t GPUPIDS = 100;
 
 UVF_SMI_Server::UVF_SMI_Server(std::string socName, int connectCount) : sockName(socName)
 {
