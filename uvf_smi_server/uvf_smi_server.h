@@ -14,10 +14,11 @@ private:
 	int serverSocket;
 	std::string sockName;
 	struct sockaddr_un addr;
-	std::vector <uint64_t> NSPids;
-	pid_t GetNSPid(uint64_t hostPid, uint64_t NSId);
+	uint64_t GetNSPid(uint64_t hostPid, uint64_t NSId);
 	void ThreadCon(int conn);
 	uint64_t GetNSId(uint64_t hostPid);
+        void FillNSPids(std::vector <uint64_t>& NSPids);
+	void DataFiltration(std::vector <uint64_t>& NSPids);
 	
 public:
 	UVF_SMI_Server(std::string socName, int connectCount);
