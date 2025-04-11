@@ -18,7 +18,6 @@ private:
 	void ThreadCon(int conn);
 	uint64_t GetNSId(uint64_t hostPid);
         void FillNSPids(std::vector <uint64_t>& NSPids);
-	void DataFiltration(std::vector <uint64_t>& NSPids);
 	
 public:
 	UVF_SMI_Server(std::string socName, int connectCount);
