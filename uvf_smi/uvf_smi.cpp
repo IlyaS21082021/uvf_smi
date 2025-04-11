@@ -78,10 +78,8 @@ bool UVF_SMI::GetProcData(unsigned int procCount)
 {
 	nvmlDevice_t dev;
 	std::vector<UvfPidDataStruct> procGPUData;
-	int32_t gpus[10];
 
 	gpuPids.clear();
-	
 	if (nvmlDeviceGetHandleByIndex(0, &dev) != NVML_SUCCESS)
 	{
 		std::cerr << "ERROR: nvmlDeviceGetHandleByIndex returned bad result\n";
