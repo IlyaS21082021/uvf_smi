@@ -54,7 +54,7 @@ uint64_t UVF_SMI_Server::GetNSId(uint64_t hostPid)
 pid_t UVF_SMI_Server::GetNSPid(uint64_t hostPid, uint64_t NSId)
 {
 	std::string line;
-	pid_t NSPid;
+	uint64_t NSPid;
 	
 	if (GetNSId(hostPid) != NSId)
 		return 0;
@@ -95,26 +95,27 @@ void UVF_SMI_Server::Run()
 	}
 }
 
+void UVF_SMI_Server::FillNSPids(std::vector <uint64_t>& NSPids)
+{
+	uint64_t p;
+	
+	for (int i = 2; i < pidsBuf[1] + 2; i++)
+	{
+		p = GetNSPid(pidsBuf[i], pidsBuf[0]);
+		if (p > 0)
+			NSPids.push_back(p);
+	}
+	NSPids[0] = NSPids.size() - 1;
+}
+
 void UVF_SMI_Server::ThreadCon(int conn)
 {
-	uint64_t pidsBuf[100];
-	uint32_t p;
-	
-	memset(pidsBuf, 0, sizeof(pidsBuf));
-	NSPids.clear();
-	NSPids.push_back(0);
+	std::vector<uint64_t> NSPids;
+
+	NSPids.resize(100);
 	while (recv(conn, pidsBuf, sizeof(pidsBuf), 0) > 0)
-	{
-		for (int i = 2; i < pidsBuf[1] + 2; i++)
-		{
-			p = GetNSPid(pidsBuf[i], pidsBuf[0]);
-			if (p)
-				NSPids.push_back(p);
-		}
-		NSPids[0] = NSPids.size() - 1;
+	{		
 		send(conn, NSPids.data(), NSPids.size()*sizeof(uint64_t), 0);
-		memset(pidsBuf, 0, sizeof(pidsBuf));
-		NSPids.clear();
 		NSPids.push_back(0);
 	}
 	close(conn);
