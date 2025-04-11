@@ -6,6 +6,8 @@
 #include <charconv>
 #include <sys/stat.h>
 
+cinstexpr uint32_t GPUPIDS = 100;
+
 UVF_SMI_Server::UVF_SMI_Server(std::string socName, int connectCount) : sockName(socName)
 {
 	serverSocket = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -98,8 +100,9 @@ void UVF_SMI_Server::Run()
 void UVF_SMI_Server::FillNSPids(std::vector <uint64_t>& NSPids)
 {
 	uint64_t p;
-	
-	for (int i = 2; i < pidsBuf[1] + 2; i++)
+
+	NSPids.resize(NSPids[0] + 1);
+	for (int i = 2; i < NSPids.size(); i++)
 	{
 		p = GetNSPid(pidsBuf[i], pidsBuf[0]);
 		if (p > 0)
@@ -112,9 +115,10 @@ void UVF_SMI_Server::ThreadCon(int conn)
 {
 	std::vector<uint64_t> NSPids;
 
-	NSPids.resize(100);
-	while (recv(conn, pidsBuf, sizeof(pidsBuf), 0) > 0)
+	NSPids.resize(GPUPIDS);
+	while (recv(conn, NSPids.data(), sizeof(uint64_t)*GPUPIDS, 0) > 0)
 	{		
+		FillNSPids(NSPids);
 		send(conn, NSPids.data(), NSPids.size()*sizeof(uint64_t), 0);
 		NSPids.push_back(0);
 	}
