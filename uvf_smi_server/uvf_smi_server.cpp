@@ -100,15 +100,18 @@ void UVF_SMI_Server::Run()
 void UVF_SMI_Server::FillNSPids(std::vector <uint64_t>& NSPids)
 {
 	uint64_t p;
+	std::vector <uint64_t> tempV;
 
-	NSPids.resize(NSPids[0] + 1);
+	tempV.push_back(0);
+	NSPids.resize(NSPids[1] + 2);
 	for (int i = 2; i < NSPids.size(); i++)
 	{
-		p = GetNSPid(pidsBuf[i], pidsBuf[0]);
+		p = GetNSPid(NSPids[i], NSPids[0]);
 		if (p > 0)
-			NSPids.push_back(p);
+			tempV.push_back(p);
 	}
-	NSPids[0] = NSPids.size() - 1;
+	tempV[0] = tempV.size() - 1;
+	NSPids = tempV;
 }
 
 void UVF_SMI_Server::ThreadCon(int conn)
@@ -120,7 +123,6 @@ void UVF_SMI_Server::ThreadCon(int conn)
 	{		
 		FillNSPids(NSPids);
 		send(conn, NSPids.data(), NSPids.size()*sizeof(uint64_t), 0);
-		NSPids.push_back(0);
 	}
 	close(conn);
 }
